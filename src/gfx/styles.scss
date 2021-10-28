@@ -1,0 +1,30 @@
+// Dependencies
+@use "sass:color";
+
+// Fonts
+@font-face {
+    font-family: 'Noto Sans';
+    src: url('/fonts/NotoSans-Regular.ttf');
+}
+
+// Variables
+
+$bg-dark: #0D0D0D;
+
+$text-normal: rgb(255, 255, 255);
+$text-half: rgba(255, 255, 255, 0.25);
+$text-quarter: rgba(255, 255, 255, 0.1);
+
+$clr-entity-border: #B2B2B2;
+$clr-entity-name: #F0F0F0;
+$clr-entity-placeholder: color.adjust($clr-entity-border, $alpha: -0.9);
+
+body {
+    font-family: 'Noto Sans';
+    font-weight: 400;
+    color: $text-normal;
+}
+
+#dd-root {
+    background-color: $bg-dark;
+}
