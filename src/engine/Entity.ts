@@ -1,9 +1,9 @@
 import { IAwake, IComponent } from "./Component";
 
 export abstract class Entity implements IAwake {
-    components: IComponent[]
+    components: IComponent[] = []
 
-    abstract awake ()
+    abstract awake (): void
 
     addComponent (c: IComponent) {
         this.components.push(c)

@@ -9,7 +9,7 @@ export interface IComponent extends IAwake {
 }
 
 export class PositionComponent implements IComponent {
-    Entity: Entity | null
+    Entity: Entity | null = null
 
     constructor (public x: number, public y: number) {}
 
@@ -17,7 +17,7 @@ export class PositionComponent implements IComponent {
 }
 
 export class SizeComponent implements IComponent {
-    Entity: Entity | null
+    Entity: Entity | null = null
 
     constructor (public w: number, public h: number) {}
 
@@ -25,10 +25,9 @@ export class SizeComponent implements IComponent {
 }
 
 export class RadiusComponent implements IComponent {
-    Entity: Entity | null
+    Entity: Entity | null = null
 
-    x: number
-    y: number
+    constructor (public x: number, public y: number) {}
 
     awake () {}
 }
