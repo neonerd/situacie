@@ -1,10 +1,14 @@
 import copy from 'rollup-plugin-copy'
+
 import html from '@rollup/plugin-html'
-import styles from "rollup-plugin-styles";
+import commonjs from "@rollup/plugin-commonjs"
+import resolve from "@rollup/plugin-node-resolve"
+import scss from 'rollup-plugin-scss'
 
 import typescript from "rollup-plugin-typescript2"
-import commonjs from "rollup-plugin-commonjs";
-import resolve from "rollup-plugin-node-resolve";
+import typescriptM from 'typescript'
+
+import serve from 'rollup-plugin-serve'
 
 export default {
     input: './src/index.ts',
@@ -22,11 +26,11 @@ export default {
         }),
 
         typescript({
-            typescript: require("typescript"),
+            typescript: typescriptM,
             tsconfig: "./tsconfig.json"
         }),
 
-        styles(),
+        scss(),
 
         html({}),
 
@@ -34,6 +38,8 @@ export default {
             targets: [
                 { src: 'vendor/fonts', dest: 'dist' }
             ]
-        })
+        }),
+
+        serve('dist')
     ]
   }
