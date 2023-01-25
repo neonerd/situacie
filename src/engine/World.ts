@@ -1,20 +1,38 @@
-import { Entity } from "./Entity"
-
 import { Svg, SVG } from '@svgdotjs/svg.js'
+import { Scene } from './Scene'
+import { WindowSettings } from './utility'
 
-export class World extends Entity {
-    entities: Entity[] = []
+export class World {
     svg: Svg
 
-    constructor (public domRoot: HTMLElement) {
-        super()
+    windowSettings: WindowSettings
 
-        const WINDOW_WIDTH = window.innerWidth
-        const WINDOW_HEIGHT = window.innerHeight
+    scenes: Scene[] = []
+    activeScene?: Scene
 
-        this.svg = SVG().addTo(this.domRoot).size(WINDOW_WIDTH, WINDOW_HEIGHT)
+    constructor (public domRoot: HTMLElement, public window: Window) {
+        this.windowSettings = new WindowSettings(this.window)
+
+        this.svg = SVG().addTo(this.domRoot).size(this.windowSettings.width, this.windowSettings.height)
+
+        this.awake()
     }
 
     awake () {
+        this.init()
+    }
+
+    init () {
+        // Handlers
+        this.window.addEventListener('mousemove', (e) => {
+            this.activeScene?.handleMouseMove(e)
+        })
+        this.window.addEventListener('mouseup', (e) => {
+            console.log('global: mouseup')
+            this.activeScene?.handleMouseUp(e)
+        })
+
+        this.activeScene = new Scene(this.svg, this.windowSettings)
+        this.activeScene.awake()
     }
 }

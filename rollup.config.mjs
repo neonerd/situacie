@@ -32,7 +32,9 @@ export default {
 
         scss(),
 
-        html({}),
+        html({
+            title: 'ťahať a púšťať'
+        }),
 
         copy({
             targets: [

@@ -7,8 +7,6 @@ console.log('===== ====== ====== ======')
 // START HERE
 //
 
-
-
 //
 // CSS
 //
@@ -16,7 +14,15 @@ console.log('===== ====== ====== ======')
 import '../vendor/css/reset.css'
 import './gfx/styles.scss'
 
+//
+// DEPENDENCIES
+//
+
 import { World } from './engine/World'
+
+//
+// MAIN
+//
 
 /**
  * Main function initializes the game
@@ -27,16 +33,11 @@ function main () {
     root.id = 'dd-root'
     root.style.width = '100vw'
     root.style.height = '100vh'
+    root.style.overflow = 'hidden'
     document.body.appendChild(root)
 
     // Initialize world
-    const world = new World(root)
-    
-    // svg.rect(200, 110).move(100, 100).fill({
-    //    color: 'transparent'
-    // }).stroke({
-    //    color: '#B2B2B2'
-    // }).radius(10, 10)
+    const world = new World(root, window)
 }
 
 // ===
