@@ -1,6 +1,7 @@
 import { Box, G, Point, Rect, Svg, Text } from "@svgdotjs/svg.js"
 
 import { OBJEKT_MEDIUM_H, OBJEKT_MEDIUM_W, OBJEKT_SMALL_H, OBJEKT_SMALL_W } from "./constants"
+import { LiteEvent } from "./Events";
 import { IAwake, IPosition, IRectangle, IRadius, IMouseMoveListener, IMouseUpListener, IDropListener } from './interfaces'
 import { WindowSettings } from "./utility"
 
@@ -154,10 +155,18 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
     // === DRAGGING AND DROPPING
     // ===
 
+    // Event fired when Objekt has started dragging
+    private readonly onStartDragging = new LiteEvent<string>();
+    public get startedDragging() { return this.onStartDragging.expose(); } 
+
+
     startDragging (e: MouseEvent) {
         this.isDragging = true
         this.draggingLastClick = this.svg.point(getCoordsFromEvent(e))
         this.draggingBbox = this.groupEl.bbox()
+
+        // Send event to detach from parents
+        this.onStartDragging.trigger('Hello')
     }
 
     stopDragging () {
@@ -227,6 +236,13 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
                 availableSlot.objekt = o
                 o.groupEl.move(availableSlot.placeholder?.bbox().x, availableSlot.placeholder?.bbox().y - OBJEKT_SMALL_H)
                 this.groupEl.add(o.groupEl)
+
+                availableSlot.objekt.startedDragging.on((s) => {
+                    // If the Objekt gets dragged again, we serve its connection with this objekt
+                    // this.groupEl.removeElement(o.groupEl)
+                    this.svg.add(o.groupEl)
+                    availableSlot.objekt = undefined
+                })
             }
         }
     }
