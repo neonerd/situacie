@@ -26,6 +26,10 @@ interface ObjektSettings {
     startingX?: number
     startingY?: number
 
+    // Dragging
+    isDraggable?: boolean
+    isFixed?: boolean
+
     // Label
     label?: string
 }
@@ -46,15 +50,19 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
 
     // Settings
     isDraggable: boolean = true
+    isFixed: boolean = false
 
     // Dragging
     isDragging: boolean = false
     draggingLastClick: Point
     draggingBbox: Box
+    draggingStartClick: Point
 
     // Slots
     slots: ObjektSlot[] = []
     isAcceptingChildren: boolean = false
+
+    // Connections
 
     // Timer
 
@@ -68,6 +76,7 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
         objektId++
 
         this.draggingLastClick = svg.point()
+        this.draggingStartClick = svg.point()
         this.draggingBbox = svg.bbox()
         this.groupEl = this.svg.group()
 
@@ -86,6 +95,14 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
         }
         if (this.settings.startingY) {
             this.positionY = this.settings.startingY    
+        }
+
+        // Set draggable
+        if (this.settings.isDraggable) {
+            this.isDraggable = this.settings.isDraggable
+        }
+        if (this.settings.isFixed) {
+            this.isFixed = this.settings.isFixed
         }
 
         // Set label
@@ -115,13 +132,13 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
     render () {
         console.log('render')
 
-        this.rectEl = this.svg.rect(this.width, this.height).move(this.positionX, this.positionY).fill({
+        this.rectEl = this.svg.rect(this.width, this.height).move(this.positionX, this.positionY + 30).fill({
            color: 'transparent'
         }).stroke({
            color: '#B3B3B3'
         }).radius(this.radiusX, this.radiusY)
 
-        this.textEl = this.svg.text(this.label).move(this.positionX, this.positionY - 30).font({
+        this.textEl = this.svg.text(this.label).move(this.positionX, this.positionY).font({
             family: 'Noto Sans',
             size: 15
         }).fill('#ffffff')
@@ -162,6 +179,7 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
 
     startDragging (e: MouseEvent) {
         this.isDragging = true
+        this.draggingStartClick = this.svg.point({x: this.positionX, y: this.positionY})
         this.draggingLastClick = this.svg.point(getCoordsFromEvent(e))
         this.draggingBbox = this.groupEl.bbox()
 
@@ -173,6 +191,10 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
         this.isDragging = false
     }
 
+    returnToStartingPosition () {
+        this.groupEl.animate().move(this.draggingStartClick.x, this.draggingStartClick.y)
+    }
+
     handleMouseDown (e: MouseEvent) {
         e.preventDefault()
         e.stopPropagation()
@@ -182,12 +204,18 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
         }
     }
 
-    handleMouseUp (e: MouseEvent) {
+    handleMouseUp (e: MouseEvent, wasAcceptedByDropTarget: boolean = false) {
         e.preventDefault()
         e.stopPropagation()
 
         if (this.isDraggable) {
-            this.stopDragging()
+            if (this.isDragging) {
+                this.stopDragging()
+
+                if (this.isFixed && !wasAcceptedByDropTarget) {
+                    this.returnToStartingPosition()
+                }
+            }
         }
     }
 
@@ -229,12 +257,19 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
         return null
     }
 
-    handleDrop(o: Objekt): void {
+    /*
+    * Handles dropping of an Objekt
+    * Returns true if the Objekt was added to an available slot
+    */
+    handleDrop(o: Objekt): boolean {
+        console.log('handling drop')
         if (this.slots.length) {
             const availableSlot = this.getNextFreeSlot()
             if (availableSlot) {
                 availableSlot.objekt = o
-                o.groupEl.move(availableSlot.placeholder?.bbox().x, availableSlot.placeholder?.bbox().y - OBJEKT_SMALL_H)
+                o.groupEl.animate().move(availableSlot.placeholder?.bbox().x, availableSlot.placeholder?.bbox().y - OBJEKT_SMALL_H)
+                o.positionX = availableSlot.placeholder?.bbox().x
+                o.positionY = availableSlot.placeholder?.bbox().y - OBJEKT_SMALL_H
                 this.groupEl.add(o.groupEl)
 
                 availableSlot.objekt.startedDragging.on((s) => {
@@ -243,7 +278,11 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
                     this.svg.add(o.groupEl)
                     availableSlot.objekt = undefined
                 })
+
+                return true
             }
         }
+
+        return false
     }
 }

@@ -12,7 +12,8 @@ export class Scene implements IMouseMoveListener, IMouseUpListener  {
 
     awake () {
         this.objects.push(new Objekt(this.svg, this.windowSettings, {
-            label: 'Petra'
+            label: 'Petra',
+            isFixed: true
         }))
         this.objects.push(new Objekt(this.svg, this.windowSettings, {
             numberOfSlots: 2,
@@ -36,8 +37,7 @@ export class Scene implements IMouseMoveListener, IMouseUpListener  {
         // Handle mouse ups on objects
         for (const o of this.objects) {
             const wasDragged = o.isDragging
-
-            o.handleMouseUp(e)
+            let wasAccepted = false
 
             if (wasDragged) {
                 // Handle drops
@@ -45,12 +45,14 @@ export class Scene implements IMouseMoveListener, IMouseUpListener  {
                     if (o.id != ob.id) {
                         if (ob.rectEl && o.rectEl) {
                             if (doBboxesOverlap(o.rectEl.bbox(), ob.rectEl.bbox())) {
-                                ob.handleDrop(o)
+                                wasAccepted = ob.handleDrop(o)
                             }
                         }
                     }
                 }
             }
+
+            o.handleMouseUp(e, wasAccepted)
         }
     }
 }

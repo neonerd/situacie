@@ -1,6 +1,6 @@
 console.log('===== ====== ====== ======')
 console.log('ťahať a púšťať')
-console.log('(c) 2022 andrej sýkora')
+console.log('(c) 2023 andrej sýkora')
 console.log('===== ====== ====== ======')
 
 //

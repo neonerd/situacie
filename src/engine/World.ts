@@ -28,7 +28,6 @@ export class World {
             this.activeScene?.handleMouseMove(e)
         })
         this.window.addEventListener('mouseup', (e) => {
-            console.log('global: mouseup')
             this.activeScene?.handleMouseUp(e)
         })
 

@@ -11,7 +11,7 @@ export class WindowSettings {
 }
 
 //
-// GFXs
+// "Physics"
 //
 
 export function doBboxesOverlap (b1: Box, b2: Box) {
