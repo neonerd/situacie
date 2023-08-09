@@ -130,8 +130,6 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
     }
 
     render () {
-        console.log('render')
-
         this.rectEl = this.svg.rect(this.width, this.height).move(this.positionX, this.positionY + 30).fill({
            color: 'transparent'
         }).stroke({
@@ -176,7 +174,6 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
     private readonly onStartDragging = new LiteEvent<string>();
     public get startedDragging() { return this.onStartDragging.expose(); } 
 
-
     startDragging (e: MouseEvent) {
         this.isDragging = true
         this.draggingStartClick = this.svg.point({x: this.positionX, y: this.positionY})
@@ -189,6 +186,17 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
 
     stopDragging () {
         this.isDragging = false
+
+        for (const s of this.slots) {
+            if (s.objekt) {
+                s.objekt.updatePositionToReflectCurrentPoint()
+            }
+        }
+    }
+
+    updatePositionToReflectCurrentPoint () {
+        this.positionX = this.textEl?.x() as number
+        this.positionY = this.textEl?.y() as number
     }
 
     returnToStartingPosition () {

@@ -11,20 +11,13 @@ export class Scene implements IMouseMoveListener, IMouseUpListener  {
     }
 
     awake () {
-        this.objects.push(new Objekt(this.svg, this.windowSettings, {
-            label: 'Petra',
-            isFixed: true
-        }))
-        this.objects.push(new Objekt(this.svg, this.windowSettings, {
-            numberOfSlots: 2,
-            startingX: 500,
-            startingY: 200,
-            label: 'Autobus'
-        }))
-
         for (const o of this.objects) {
             o.awake()
         }
+    }
+
+    addObjekt (o: Objekt) {
+        this.objects.push(o)
     }
 
     handleMouseMove(e: MouseEvent): void {
