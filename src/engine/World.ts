@@ -1,7 +1,10 @@
 import { Svg, SVG } from '@svgdotjs/svg.js'
 import { Scene } from './Scene'
 import { WindowSettings } from './utility'
-import town from '../scenes/1_town'
+
+import scenes from '../scenes'
+
+const INITIAL_SCENE = '2'
 
 export class World {
     svg: Svg
@@ -32,7 +35,7 @@ export class World {
             this.activeScene?.handleMouseUp(e)
         })
 
-        this.activeScene = town(this.svg, this.windowSettings)
+        this.activeScene = scenes[INITIAL_SCENE](this.svg, this.windowSettings)
         this.activeScene.awake()
     }
 }
