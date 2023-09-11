@@ -1,13 +1,11 @@
-import copy from 'rollup-plugin-copy'
 
 import html from '@rollup/plugin-html'
 import commonjs from "@rollup/plugin-commonjs"
 import resolve from "@rollup/plugin-node-resolve"
+import typescript from '@rollup/plugin-typescript'
+
+import copy from 'rollup-plugin-copy'
 import scss from 'rollup-plugin-scss'
-
-import typescript from "rollup-plugin-typescript2"
-import typescriptM from 'typescript'
-
 import serve from 'rollup-plugin-serve'
 
 export default {
@@ -25,10 +23,7 @@ export default {
             include: "node_modules/**"
         }),
 
-        typescript({
-            typescript: typescriptM,
-            tsconfig: "./tsconfig.json"
-        }),
+        typescript(),
 
         scss(),
 
