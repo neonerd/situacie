@@ -57,10 +57,13 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
     draggingLastClick: Point
     draggingBbox: Box
     draggingStartClick: Point
-
+    
     // Slots
     slots: ObjektSlot[] = []
     isAcceptingChildren: boolean = false
+
+    // Parent
+    parentObjekt?: Objekt
 
     // Connections
 
@@ -201,6 +204,9 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
 
     returnToStartingPosition () {
         this.groupEl.animate().move(this.draggingStartClick.x, this.draggingStartClick.y)
+        if (this.parentObjekt) {
+            this.parentObjekt.groupEl.add(this.groupEl)
+        }
     }
 
     handleMouseDown (e: MouseEvent) {
@@ -220,9 +226,20 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
             if (this.isDragging) {
                 this.stopDragging()
 
-                if (this.isFixed && !wasAcceptedByDropTarget) {
-                    this.returnToStartingPosition()
-                }
+                // Behaviour for fixed objects
+                if (this.isFixed) {
+                    if (!wasAcceptedByDropTarget) {
+                        this.returnToStartingPosition()
+                    } else {
+                        
+                    }                    
+                } 
+                // Behaviour for non-fixed objects
+                else {
+                    if (!wasAcceptedByDropTarget) {
+
+                    }
+                }                
             }
         }
     }
@@ -278,13 +295,15 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
                 o.groupEl.animate().move(availableSlot.placeholder?.bbox().x, availableSlot.placeholder?.bbox().y - OBJEKT_SMALL_H)
                 o.positionX = availableSlot.placeholder?.bbox().x
                 o.positionY = availableSlot.placeholder?.bbox().y - OBJEKT_SMALL_H
+                o.parentObjekt = this
                 this.groupEl.add(o.groupEl)
 
                 availableSlot.objekt.startedDragging.on((s) => {
                     // If the Objekt gets dragged again, we serve its connection with this objekt
                     // this.groupEl.removeElement(o.groupEl)
                     this.svg.add(o.groupEl)
-                    availableSlot.objekt = undefined
+                    // TODO: This has to be reattached in case a fixed object is not dropped on another slot
+                    // availableSlot.objekt = undefined
                 })
 
                 return true
