@@ -32,6 +32,10 @@ interface ObjektSettings {
 
     // Label
     label?: string
+
+    // Timer
+    hasTimer?: boolean
+    timerInterval?: number
 }
 
 export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListener, IMouseUpListener, IDropListener, IAwake {
@@ -50,6 +54,8 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
 
     // Settings
     isDraggable: boolean = true
+
+    // This object cannot be dragged unless it means dropping on a slot
     isFixed: boolean = false
 
     // Dragging
@@ -68,6 +74,8 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
     // Connections
 
     // Timer
+    hasTimer: boolean = false
+    timerInterval: number = 60
 
     // Own instances
     groupEl: G
@@ -87,7 +95,7 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
         if (this.settings.numberOfSlots) {
             for (let i = 0; i< this.settings.numberOfSlots; i++) {
                 this.slots.push({
-                    placeholder: this.svg.rect(OBJEKT_SMALL_W, OBJEKT_SMALL_H)
+                    placeholder: this.svg.rect(OBJEKT_SMALL_W, OBJEKT_SMALL_H).fill({color: 'transparent'})
                 })
             }
         }
@@ -111,6 +119,14 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
         // Set label
         if (this.settings.label) {
             this.label = this.settings.label
+        }
+
+        // Timers
+        if (this.settings.hasTimer) {
+            this.hasTimer = this.settings.hasTimer
+        }
+        if (this.settings.timerInterval) {
+            this.timerInterval = this.settings.timerInterval
         }
     }
     
@@ -146,6 +162,7 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
 
         this.groupEl.add(this.rectEl).add(this.textEl)
 
+        // Slots
         if (this.slots.length) {
             const bbox = this.rectEl.bbox()
 
@@ -160,6 +177,16 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
                  this.groupEl.add(s.placeholder)
             }           
         }        
+
+        // Timer
+        if (this.hasTimer) {
+            const timerCircle = this.svg.circle(30).radius(20).fill('none').stroke({
+                color: '#B3B3B3',
+                width: 4,
+                dasharray: '0 150'
+            }).move(this.positionX + this.width - 10, this.positionY)
+            this.groupEl.add(timerCircle)
+        }
     
         // Handlers
 
@@ -293,6 +320,37 @@ export class Objekt implements IPosition, IRectangle, IRadius, IMouseMoveListene
             if (availableSlot) {
                 availableSlot.objekt = o
                 o.groupEl.animate().move(availableSlot.placeholder?.bbox().x, availableSlot.placeholder?.bbox().y - OBJEKT_SMALL_H)
+                o.positionX = availableSlot.placeholder?.bbox().x
+                o.positionY = availableSlot.placeholder?.bbox().y - OBJEKT_SMALL_H
+                o.parentObjekt = this
+                this.groupEl.add(o.groupEl)
+
+                availableSlot.objekt.startedDragging.on((s) => {
+                    // If the Objekt gets dragged again, we serve its connection with this objekt
+                    // this.groupEl.removeElement(o.groupEl)
+                    this.svg.add(o.groupEl)
+                    // TODO: This has to be reattached in case a fixed object is not dropped on another slot
+                    // availableSlot.objekt = undefined
+                })
+
+                return true
+            }
+        }
+
+        return false
+    }
+
+    /**
+     * This instantly attached an object to a free slot
+     * @param o 
+     * @returns boolean
+     */
+    addObjectToFreeSlot (o: Objekt): boolean {
+        if (this.slots.length) {
+            const availableSlot = this.getNextFreeSlot()
+            if (availableSlot) {
+                availableSlot.objekt = o
+                o.groupEl.move(availableSlot.placeholder?.bbox().x, availableSlot.placeholder?.bbox().y - OBJEKT_SMALL_H)
                 o.positionX = availableSlot.placeholder?.bbox().x
                 o.positionY = availableSlot.placeholder?.bbox().y - OBJEKT_SMALL_H
                 o.parentObjekt = this

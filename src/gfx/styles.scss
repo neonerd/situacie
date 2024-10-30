@@ -1,5 +1,5 @@
 // Dependencies
-@use "sass:color";
+// @use "sass:color";
 
 // Fonts
 @font-face {
@@ -17,7 +17,7 @@ $text-quarter: rgba(255, 255, 255, 0.1);
 
 $clr-entity-border: #B2B2B2;
 $clr-entity-name: #F0F0F0;
-$clr-entity-placeholder: color.adjust($clr-entity-border, $alpha: -0.9);
+// $clr-entity-placeholder: color.adjust($clr-entity-border, $alpha: -0.9);
 
 body {
     font-family: 'Noto Sans';

@@ -3,6 +3,7 @@ import { IMouseMoveListener, IMouseUpListener } from "./interfaces"
 
 import { Objekt } from './Objekt'
 import { doBboxesOverlap, WindowSettings } from "./utility"
+import { LiteEvent } from "./Events"
 
 export class Scene implements IMouseMoveListener, IMouseUpListener  {
     objects: Objekt[] = []
@@ -14,8 +15,23 @@ export class Scene implements IMouseMoveListener, IMouseUpListener  {
         for (const o of this.objects) {
             o.awake()
         }
+
+        this.onAwakeEnd.trigger()
     }
 
+    //
+    // Events
+    //
+    /**
+        This event gets called on the end of awakening of all objects in the scene. We can attach after-init logic to this event.
+        Example: Adding an object to a slot after the scene is initialized.
+    */
+    public onAwakeEnd = new LiteEvent<void>()
+
+    /**
+     * Adds an Objekt into the scene
+     * @param o 
+     */
     addObjekt (o: Objekt) {
         this.objects.push(o)
     }

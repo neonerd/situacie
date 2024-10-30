@@ -81,10 +81,10 @@
   dependencies:
     "@svgdotjs/svg.js" "^3.0.10"
 
-"@svgdotjs/svg.js@^3.0.10", "@svgdotjs/svg.js@^3.1.1":
-  "integrity" "sha512-73FggAUBS+zuHhJOMZiAsuE5qpwA4pmWUbLuvof2g3YnWEc3QhXA3tjqZlJJukBobSA23a/avf1Vb1U1QbER1Q=="
-  "resolved" "https://registry.npmjs.org/@svgdotjs/svg.js/-/svg.js-3.1.1.tgz"
-  "version" "3.1.1"
+"@svgdotjs/svg.js@^3.0.10", "@svgdotjs/svg.js@^3.2.4":
+  "integrity" "sha512-BjJ/7vWNowlX3Z8O4ywT58DqbNRyYlkk6Yz/D13aB7hGmfQTvGX4Tkgtm/ApYlu9M7lCQi15xUEidqMUmdMYwg=="
+  "resolved" "https://registry.npmjs.org/@svgdotjs/svg.js/-/svg.js-3.2.4.tgz"
+  "version" "3.2.4"
 
 "@types/estree@*", "@types/estree@^1.0.0":
   "integrity" "sha512-WulqXMDUTYAXCjZnk6JtIHPigp55cVtDgDrO2gHRwhyJto21+1zbVCtOYB2L1F9w4qCQ0rOGWBnBe0FNTiEJIQ=="
